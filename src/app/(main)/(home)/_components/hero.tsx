@@ -41,17 +41,17 @@ const Hero = () => {
       <div className='flex items-center justify-center space-x-2'>
         <Icons.code className='h-6 w-6 text-primary transition-transform hover:scale-125' />
         <span className='font-medium text-muted-foreground text-sm'>
-          Full-Stack Developer & Tech Writer
+          Open Source Enthusiast
         </span>
       </div>
       <h1 className='max-w-3xl text-center font-bold text-4xl leading-tight tracking-tighter sm:text-5xl md:max-w-4xl md:text-6xl lg:leading-[1.1]'>
-        <Balancer>I'm John Doe , a Full-Stack Developer.</Balancer>
+        <Balancer>I'm Bertrand Yuan, an Open-Source Lover.</Balancer>
       </h1>
       <p className='max-w-xl text-center text-muted-foreground md:max-w-2xl md:text-lg'>
         <Balancer>
-          I write about web development, software engineering, and the latest
-          technologies. I also create fun projects and tutorials to help you
-          learn and grow as a developer.
+          I am interested in GNU/Linux, Git, mailing lists, open-source
+          software, and tech writing. Welcome to my personal blog where I share
+          my thoughts and projects.
         </Balancer>
       </p>
 

@@ -25,7 +25,7 @@ export function generateOGImage(
   );
 }
 
-export function generate({ title = 'John Doe' }: GenerateProps): ReactElement {
+export function generate({ title = 'Bertrand Yuan' }: GenerateProps): ReactElement {
   return (
     <div
       tw='flex h-full w-full bg-black text-white'

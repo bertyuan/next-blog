@@ -140,7 +140,7 @@ export default function NewsletterWelcomeEmail({
                 className='select-none text-4xl text-zinc-900 leading-8'
                 style={{ fontFamily: 'Alex Brush' }}
               >
-                John Doe
+                Bertrand Yuan
               </Text>
             </Section>
           </Container>

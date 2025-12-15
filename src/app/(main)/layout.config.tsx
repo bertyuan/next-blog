@@ -12,7 +12,7 @@ export const baseOptions: BaseLayoutProps = {
   nav: {
     title,
   },
-  githubUrl: 'https://github.com/techwithanirudh/shadcn-blog',
+  githubUrl: 'https://github.com/bertyuan',
 };
 
 export const linkItems: LinkItemType[] = [
