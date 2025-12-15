@@ -1,18 +1,19 @@
 import { baseOptions, linkItems, postsPerPage } from '@/app/(main)/layout.config';
 import { InlineLink } from '@/components/inline-link';
-import { getSortedByDatePosts, getTags } from '@/lib/source';
+import { getPublishedPosts, getAllTags } from '@/lib/payload-posts';
 import { cn } from '@/lib/utils';
 import { getLinks } from 'fumadocs-ui/layouts/shared';
 import { ActiveLink } from '../active-link';
 
-export function Footer() {
+export async function Footer() {
   const links = getLinks(linkItems, baseOptions.githubUrl);
   const navItems = links.filter((item) =>
     ['nav', 'all'].includes(item.on ?? 'all'),
   );
 
-  const posts = getSortedByDatePosts();
-  const tags = getTags();
+  // 从 Payload 获取文章和标签
+  const { posts } = await getPublishedPosts({ limit: postsPerPage });
+  const tags = await getAllTags();
 
   return (
     <footer className={cn('flex flex-col gap-4')}>
@@ -54,7 +55,7 @@ export function Footer() {
             {posts.slice(0, postsPerPage).map((post, i) => (
               <li key={post.url}>
                 <ActiveLink key={i.toString()} href={post.url}>
-                  {post.data.title}
+                  {post.title}
                 </ActiveLink>
               </li>
             ))}
@@ -65,10 +66,10 @@ export function Footer() {
           <p className='font-medium text-foreground'>Tags</p>
 
           <ul className='flex flex-col gap-3'>
-            {tags.slice(0, postsPerPage).map((name, i) => (
-              <li key={`/tags/${name}`}>
-                <ActiveLink key={i.toString()} href={`/tags/${name}`}>
-                  <span className='capitalize'>{name}</span>
+            {tags.slice(0, postsPerPage).map((item, i) => (
+              <li key={`/tags/${item.tag}`}>
+                <ActiveLink key={i.toString()} href={`/tags/${item.tag}`}>
+                  <span className='capitalize'>{item.tag}</span>
                 </ActiveLink>
               </li>
             ))}
@@ -96,17 +97,6 @@ export function Footer() {
           </ul>
         </div>
       </div>
-      {/* <Design /> */}
     </footer>
-  );
-}
-
-function Design() {
-  return (
-    <div className='footer'>
-      <span className='footer-text font-mono'>john•doe</span>
-      <div className='footer-grid' />
-      <div className='footer-gradient' />
-    </div>
   );
 }

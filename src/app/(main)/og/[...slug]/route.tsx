@@ -1,6 +1,7 @@
 import { generateOGImage } from '@/app/(main)/og/[...slug]/og';
-import { metadataImage } from '@/lib/metadata-image';
+import { getPostBySlug, getAllPostSlugs } from '@/lib/payload-posts';
 import type { ImageResponse } from 'next/og';
+import { notFound } from 'next/navigation';
 
 async function loadAssets(): Promise<
   { name: string; data: Buffer; weight: 400 | 600; style: 'normal' }[]
@@ -39,20 +40,33 @@ async function loadAssets(): Promise<
   ];
 }
 
-export const GET = metadataImage.createAPI(
-  async (page): Promise<ImageResponse> => {
-    const [fonts] = await Promise.all([loadAssets()]);
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ slug: string[] }> }
+): Promise<ImageResponse> {
+  const { slug } = await params;
+  const postSlug = slug[0];
 
-    return generateOGImage({
-      title: page.data.title,
-      description: page.data.description,
-      fonts,
-    });
-  },
-);
+  if (!postSlug) {
+    notFound();
+  }
 
-export function generateStaticParams(): {
-  slug: string[];
-}[] {
-  return metadataImage.generateParams();
+  const post = await getPostBySlug(postSlug);
+
+  if (!post) {
+    notFound();
+  }
+
+  const fonts = await loadAssets();
+
+  return generateOGImage({
+    title: post.title,
+    description: post.description,
+    fonts,
+  });
+}
+
+export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
+  const slugs = await getAllPostSlugs();
+  return slugs.map((slug) => ({ slug: [slug, 'image.png'] }));
 }

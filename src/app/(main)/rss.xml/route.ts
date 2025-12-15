@@ -1,10 +1,10 @@
 import { description, title } from '@/app/(main)/layout.config';
 import { owner } from '@/app/(main)/layout.config';
 import { baseUrl } from '@/lib/constants';
-import { getPosts } from '@/lib/source';
+import { getPublishedPosts } from '@/lib/payload-posts';
 import { Feed } from 'feed';
 
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';
 
 const escapeForXML = (str: string) => {
   return str
@@ -15,8 +15,8 @@ const escapeForXML = (str: string) => {
     .replace(/'/g, '&apos;');
 };
 
-export const GET = () => {
-  const feed = createFeed();
+export const GET = async () => {
+  const feed = await createFeed();
 
   return new Response(feed.atom1(), {
     headers: {
@@ -25,7 +25,7 @@ export const GET = () => {
   });
 };
 
-function createFeed(): Feed {
+async function createFeed(): Promise<Feed> {
   const feed = new Feed({
     title,
     description,
@@ -39,24 +39,24 @@ function createFeed(): Feed {
     updated: new Date(),
   });
 
-  const posts = getPosts();
+  const { posts } = await getPublishedPosts({ limit: 1000 });
+
   for (const post of posts) {
     feed.addItem({
-      title: post.data.title,
-      description: post.data.description,
+      title: post.title,
+      description: post.description,
       link: new URL(post.url, baseUrl).href,
-      image: {
-        title: post.data.title,
-        type: 'image/png',
-        url: escapeForXML(
-          new URL(`/og/${post.slugs.join('/')}/image.png`, baseUrl.href).href,
-        ),
-      },
-      date: post.data.date,
+      image: post.image
+        ? {
+            title: post.title,
+            type: 'image/png',
+            url: escapeForXML(new URL(post.image, baseUrl.href).href),
+          }
+        : undefined,
+      date: post.date,
       author: [
         {
-          name: post.data.author,
-          // link: new URL('/about', baseUrl).href,
+          name: post.author,
         },
       ],
     });

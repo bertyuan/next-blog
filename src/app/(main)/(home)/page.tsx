@@ -3,16 +3,11 @@ import Posts from '@/app/(main)/(home)/_components/posts';
 import { Icons } from '@/components/icons/icons';
 import { Section } from '@/components/section';
 import Separator from '@/components/separator';
-import { getSortedByDatePosts } from '@/lib/source';
 import { getPublishedPosts } from '@/lib/payload-posts';
 import { CTA } from './_components/call-to-action';
 
 export default async function Home() {
-  // 获取 MDX 文章（保留原有功能）
-  // const mdxPosts = getSortedByDatePosts().slice(0, 3);
-
-  // 获取 Payload CMS 文章
-  const { posts: payloadPosts } = await getPublishedPosts({ limit: 3 });
+  const { posts } = await getPublishedPosts({ limit: 3 });
 
   return (
     <>
@@ -26,7 +21,7 @@ export default async function Home() {
         </h2>
       </Section>
       <Separator />
-      <Posts mdxPosts={[]} payloadPosts={payloadPosts} />
+      <Posts posts={posts} />
       <Separator />
       <CTA />
     </>

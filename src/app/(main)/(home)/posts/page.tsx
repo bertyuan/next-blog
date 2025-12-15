@@ -3,69 +3,9 @@ import { NumberedPagination } from '@/components/numbered-pagination';
 import { PostCard } from '@/components/posts/post-card';
 import { Section } from '@/components/section';
 import { createMetadata } from '@/lib/metadata';
-import { getPublishedPosts, type BlogPost } from '@/lib/payload-posts';
-import { getSortedByDatePosts, type Page } from '@/lib/source';
+import { getPublishedPosts } from '@/lib/payload-posts';
 import type { Metadata, ResolvingMetadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
-
-// 统一的文章类型
-interface UnifiedPost {
-  id: string;
-  title: string;
-  description: string;
-  image?: string;
-  url: string;
-  date: Date;
-  author: string;
-  tags?: string[];
-  source: 'mdx' | 'payload';
-}
-
-// 将 MDX 文章转换为统一格式
-function transformMdxPost(post: Page): UnifiedPost {
-  return {
-    id: `mdx-${post.url}`,
-    title: post.data.title,
-    description: post.data.description ?? '',
-    image: post.data.image,
-    url: post.url,
-    date: new Date(post.data.date),
-    author: post.data.author,
-    tags: post.data.tags,
-    source: 'mdx',
-  };
-}
-
-// 将 Payload 文章转换为统一格式
-function transformPayloadPost(post: BlogPost): UnifiedPost {
-  return {
-    id: `payload-${post.id}`,
-    title: post.title,
-    description: post.description,
-    image: post.image,
-    url: post.url,
-    date: post.date,
-    author: post.author,
-    tags: post.tags,
-    source: 'payload',
-  };
-}
-
-// 获取所有文章（合并 MDX 和 Payload）
-async function getAllPosts(): Promise<UnifiedPost[]> {
-  // 获取 MDX 文章
-  const mdxPosts = getSortedByDatePosts().map(transformMdxPost);
-
-  // 获取 Payload 文章（获取全部，用于分页计算）
-  const { posts: payloadPosts } = await getPublishedPosts({ limit: 1000 });
-  const transformedPayloadPosts = payloadPosts.map(transformPayloadPost);
-
-  // 合并并按日期排序
-  const allPosts = [...mdxPosts, ...transformedPayloadPosts];
-  allPosts.sort((a, b) => b.date.getTime() - a.date.getTime());
-
-  return allPosts;
-}
 
 const CurrentPostsCount = ({
   startIndex,
@@ -115,11 +55,6 @@ export default async function Page(props: {
 }) {
   const searchParams = await props.searchParams;
 
-  // 获取所有文章
-  const allPosts = await getAllPosts();
-  const totalPosts = allPosts.length;
-  const pageCount = Math.ceil(totalPosts / postsPerPage);
-
   const pageIndex = searchParams.page
     ? Number.parseInt(
         Array.isArray(searchParams.page)
@@ -129,21 +64,26 @@ export default async function Page(props: {
       ) - 1
     : 0;
 
-  if (pageIndex < 0 || (pageCount > 0 && pageIndex >= pageCount)) notFound();
+  // 获取文章（带分页）
+  const { posts, totalDocs, totalPages } = await getPublishedPosts({
+    limit: postsPerPage,
+    page: pageIndex + 1,
+  });
+
+  if (pageIndex < 0 || (totalPages > 0 && pageIndex >= totalPages)) notFound();
 
   const startIndex = pageIndex * postsPerPage;
-  const endIndex = startIndex + postsPerPage;
-  const posts = allPosts.slice(startIndex, endIndex);
+  const endIndex = startIndex + posts.length;
 
   return (
     <>
       <Section className='p-4 lg:p-6'>
         <h1 className='font-bold text-3xl leading-tight tracking-tighter md:text-4xl'>
-          All {totalPosts} Posts{' '}
+          All {totalDocs} Posts{' '}
           <CurrentPostsCount
             startIndex={startIndex}
             endIndex={endIndex}
-            totalPosts={totalPosts}
+            totalPosts={totalDocs}
           />
         </h1>
       </Section>
@@ -166,7 +106,7 @@ export default async function Page(props: {
           })}
         </div>
       </Section>
-      {pageCount > 1 && <Pagination pageIndex={pageIndex} pageCount={pageCount} />}
+      {totalPages > 1 && <Pagination pageIndex={pageIndex} pageCount={totalPages} />}
     </>
   );
 }

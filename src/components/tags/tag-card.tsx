@@ -1,19 +1,18 @@
 import { Icons } from '@/components/icons/icons';
-import { getPostsByTag } from '@/lib/source';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
 export const TagCard = ({
   name,
   displayCount = false,
+  count,
   className = '',
 }: {
   name: string;
   displayCount?: boolean;
+  count?: number;
   className?: string;
 }) => {
-  const posts = getPostsByTag(name);
-
   return (
     <Link
       href={`/tags/${name}`}
@@ -27,8 +26,8 @@ export const TagCard = ({
         className='my-auto text-muted-foreground transition-transform group-hover:rotate-12'
       />
       <span className='text-card-foreground'>{name}</span>
-      {displayCount && (
-        <span className='ml-auto text-muted-foreground'>({posts.length})</span>
+      {displayCount && count !== undefined && (
+        <span className='ml-auto text-muted-foreground'>({count})</span>
       )}
     </Link>
   );

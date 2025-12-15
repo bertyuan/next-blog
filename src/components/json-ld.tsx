@@ -1,33 +1,30 @@
 import { title as homeTitle } from '@/app/(main)/layout.config';
 import { owner } from '@/app/(main)/layout.config';
 import { baseUrl } from '@/lib/constants';
-import type { Post } from '@/lib/source';
+import type { BlogPost } from '@/lib/payload-posts';
 import type { BlogPosting, BreadcrumbList, Graph } from 'schema-dts';
 
-export const PostJsonLd = ({ page }: { page: Post }) => {
-  if (!page) {
+export const PostJsonLd = ({ post }: { post: BlogPost }) => {
+  if (!post) {
     return null;
   }
 
-  const url = new URL(page.url, baseUrl.href).href;
+  const url = new URL(post.url, baseUrl.href).href;
 
-  const post: BlogPosting = {
+  const blogPosting: BlogPosting = {
     '@type': 'BlogPosting',
-    headline: page.data.title,
-    description: page.data.description,
-    image: new URL(`/og/${page.slugs.join('/')}/image.png`, baseUrl.href).href,
-    datePublished: new Date(page.data.date).toISOString(),
-    dateModified: page.data.lastModified
-      ? new Date(page.data.lastModified).toISOString()
-      : undefined,
+    headline: post.title,
+    description: post.description,
+    image: post.image ? new URL(post.image, baseUrl.href).href : undefined,
+    datePublished: post.date.toISOString(),
+    dateModified: post.updatedAt.toISOString(),
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': url,
     },
     author: {
       '@type': 'Person',
-      name: page.data.author,
-      // url: 'https://techwithanirudh.com/',
+      name: post.author,
     },
     publisher: {
       '@type': 'Person',
@@ -54,7 +51,7 @@ export const PostJsonLd = ({ page }: { page: Post }) => {
       {
         '@type': 'ListItem',
         position: 3,
-        name: page.data.title,
+        name: post.title,
         item: url,
       },
     ],
@@ -62,7 +59,7 @@ export const PostJsonLd = ({ page }: { page: Post }) => {
 
   const graph: Graph = {
     '@context': 'https://schema.org',
-    '@graph': [post, breadcrumbList],
+    '@graph': [blogPosting, breadcrumbList],
   };
 
   return (

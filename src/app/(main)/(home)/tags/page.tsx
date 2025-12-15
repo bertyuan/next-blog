@@ -2,12 +2,12 @@ import { title as homeTitle } from '@/app/(main)/layout.config';
 import { Section } from '@/components/section';
 import { TagCard } from '@/components/tags/tag-card';
 import { createMetadata } from '@/lib/metadata';
-import { getTags } from '@/lib/source';
+import { getAllTags } from '@/lib/payload-posts';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 
-export default function Page() {
-  const tags = getTags();
+export default async function Page() {
+  const tags = await getAllTags();
 
   return (
     <>
@@ -18,11 +18,12 @@ export default function Page() {
       </Section>
       <Section className='h-full' sectionClassName='flex flex-1'>
         <div className='grid grid-cols-1 divide-y divide-dashed divide-border/70 sm:grid-cols-2 lg:grid-cols-4 dark:divide-border'>
-          {tags.map((tag, index) => (
+          {tags.map((item, index) => (
             <TagCard
-              key={tag}
+              key={item.tag}
               displayCount={true}
-              name={tag}
+              name={item.tag}
+              count={item.count}
               className={cn(
                 'items-center justify-start gap-2 rounded-none border-r-0 bg-card/50 p-6 last:border-border/70 last:border-b last:border-dashed hover:bg-card/80 last:dark:border-border',
                 tags.at(index - 1) && 'border-l',

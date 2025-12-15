@@ -1,8 +1,7 @@
 'use server';
 
-import { getContact, sendWelcomeEmail, updateContact } from '@/lib/resend';
+import { getContact, updateContact } from '@/lib/resend';
 import { ActionError, actionClient } from '@/lib/safe-action';
-import { getSortedByDatePosts } from '@/lib/source';
 import { NewsletterSchema } from '@/lib/validators';
 import { getSession } from '@/server/auth';
 import { Resend } from 'resend';
@@ -59,12 +58,12 @@ export const subscribeUser = actionClient
         );
       }
 
-      const posts = getSortedByDatePosts();
-      await sendWelcomeEmail({
-        posts,
-        to: email,
-        firstName: firstName || 'there',
-      });
+      // const posts = getSortedByDatePosts();
+      // await sendWelcomeEmail({
+      //   posts,
+      //   to: email,
+      //   firstName: firstName || 'there',
+      // });
 
       return {
         success: true,
