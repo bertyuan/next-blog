@@ -1,0 +1,115 @@
+Next blog
+=========
+
+基于 Next.js 15 与 Payload CMS 的全栈博客，内置认证、评论、搜索、RSS 和邮件模板。
+
+项目简介
+--------
+
+前端使用 Next.js App Router 配合 Tailwind 和 shadcn，并借助 fumadocs 的组件搭建导航、分页与搜索。
+内容由 Payload CMS（payload.config.ts）管理，支持富文本、标签、封面图与发布状态。
+认证使用 better-auth，支持 Google 和 GitHub；会话与评论通过 Drizzle ORM 写入 Postgres。
+评论集成 @fuma-comment，站点同时生成 /rss.xml 订阅源与 /api/search 搜索索引。
+
+主要特性
+--------
+
+文章管理：Payload 后台 /admin 可创建草稿或已发布文章，支持封面、标签与定时发布时间。
+博客体验：列表分页、标签聚合页、文章详情富文本渲染、分享按钮、一键复制链接。
+社交与互动：Google 或 GitHub 登录，better-auth 会话管理，Fuma Comment 评论存储在本地数据库。
+增强能力：RSS 输出、站内搜索索引、自动 Open Graph Banner、next-sitemap 生成站点地图。
+邮件模板：emails/newsletter-welcome.tsx 提供 React Email + Tailwind 的欢迎邮件，可接入 Resend。
+运维友好：.env 校验、start-database.sh 一键启动本地 Postgres，统一的 Drizzle 与 Payload 脚本。
+
+技术栈
+------
+
+框架：Next.js 15（App Router），服务端组件，静态与动态混合渲染。
+UI：Tailwind CSS 4、shadcn、fumadocs-ui，用于导航、分页、Section 和主题。
+内容：Payload CMS 管理 Posts、Users、Media，使用 Lexical 富文本。
+数据：PostgreSQL 与 Drizzle ORM，认证与评论表以 blog_* 作为前缀。
+认证：better-auth + OAuth（Google/GitHub），包含会话和额外角色字段。
+邮件：Resend 与 React Email，Tailwind 样式的欢迎模板。
+
+快速开始
+--------
+
+1. 安装工具链。推荐 Node 20+，使用 pnpm（已锁定 pnpm-lock.yaml）。
+2. 配置环境变量。复制 .env.example 为 .env，填写 DATABASE_URL、PAYLOAD_SECRET、BETTER_AUTH_SECRET，如需社交登录补齐 OAuth。
+3. 启动 Postgres。运行 ./start-database.sh（依赖 Docker/Podman），或连接自带的 Postgres 实例。
+4. 安装依赖并生成结构。执行 pnpm install；pnpm db:generate && pnpm db:migrate 处理 Drizzle；pnpm payload:migrate 同步 Payload CMS。
+5. 运行开发服务器。pnpm dev（默认 3000，后台 /admin，博客 /）。
+6. 可选步骤。pnpm payload:generate 生成类型；pnpm email:dev -p 3001 预览邮件模板。
+开发模式下，Payload 登录框会预填 admin@example.com / admin123。
+
+核心模块
+--------
+
+内容模型位于 payload.config.ts，定义文章、用户、媒体，支持封面上传、标签数组、发布时间与状态。
+数据访问封装在 src/lib/payload-posts.ts，用于文章查询、标签统计、分页与 slug 工具。
+页面与布局在 src/app/(main)，_components 内含 Hero、CTA、文章列表等 UI。
+认证与评论位于 src/server/auth（better-auth + Drizzle）和 src/server/comments（写入 blog_comments 表）。
+搜索与订阅在 src/app/(main)/api/search/route.ts（索引）与 src/app/(main)/rss.xml/route.ts（Atom/RSS）。
+邮件模板是 emails/newsletter-welcome.tsx，可接受文章数组渲染卡片。
+
+项目结构（节选）
+----------------
+
+src/
+  app/
+    (main)/(home)/page.tsx               首页：Hero、最近文章、CTA
+    (main)/(home)/posts/[slug]/page.tsx  文章详情、评论、分享
+    (main)/(home)/posts/page.tsx         分页文章列表
+    (main)/(home)/tags/page.tsx          标签聚合
+    (main)/api/search/route.ts           搜索索引接口
+    (main)/rss.xml/route.ts              Atom/RSS 输出
+    (payload)/admin/...                  Payload CMS 后台
+  lib/                                   数据与工具（payload-posts、metadata、auth-client）
+  server/                                better-auth 与 Drizzle schema，评论存储
+  emails/                                React Email 模板
+
+环境变量
+--------
+
+常用或必填项：
+  DATABASE_URL：Postgres 连接串，例如 postgresql://user:pass@localhost:5432/blog
+  PAYLOAD_SECRET：Payload CMS 的 JWT 密钥
+  BETTER_AUTH_SECRET：better-auth 会话密钥
+  BETTER_AUTH_URL：认证回调地址，本地可用 http://localhost:3000
+  NEXT_PUBLIC_SERVER_URL：生成链接、OG、RSS 的基础地址
+  RESEND_API_KEY / RESEND_AUDIENCE_ID / EMAIL_FROM：发送邮件所需
+  GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET：启用 Google 登录时必填
+  GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET：启用 GitHub 登录时必填
+  NEXT_PUBLIC_UMAMI_URL / NEXT_PUBLIC_UMAMI_WEBSITE_ID：可选分析
+
+常用脚本
+--------
+
+pnpm dev                  启动 Next.js 开发服务器（含 Payload routes）
+pnpm build                构建生产包
+pnpm preview              预览生产构建
+pnpm db:generate          生成 Drizzle 迁移（认证/评论表）
+pnpm db:migrate           执行 Drizzle 迁移
+pnpm payload:migrate      同步 Payload CMS 数据表
+pnpm lint                 质量检查（biome）
+pnpm format               代码格式化（biome）
+pnpm email:dev            本地预览 React Email 模板
+
+页面与接口
+----------
+
+/                        首页，Hero、最新文章、CTA
+/posts                   文章分页；/posts/[slug] 展示详情、富文本、评论、分享
+/tags                    标签云与计数
+/login                   Google/GitHub 登录入口
+/admin                   Payload CMS 后台
+/api/search              站内搜索索引接口（fumadocs search）
+/rss.xml                 Atom/RSS 订阅
+
+开发提示
+--------
+
+优先使用 ./start-database.sh 启动本地 Postgres，脚本会提示端口占用。
+认证与评论表使用 blog_ 前缀，保持 drizzle.config.ts 中的 tablesFilter 一致。
+开发模式下 Payload 自动填充 <admin@example.com> / admin123，便于快速登录。
+只想浏览 UI 时可设置 SKIP_ENV_VALIDATION=1，并关闭依赖外部服务的功能；完整环境更可靠。
