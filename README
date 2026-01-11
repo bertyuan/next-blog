@@ -1,31 +1,44 @@
 Next blog
 =========
 
-A full-stack blog built with Next.js 15 and Payload CMS. Ships authentication, comments, search, RSS, and an email template out of the box.
+A full-stack blog built with Next.js 15 and Payload CMS. Ships authentication,
+comments, search, RSS, and an email template out of the box.
 
 Overview
 --------
 
-Frontend uses Next.js App Router with Tailwind and shadcn, plus fumadocs layout pieces for navigation, pagination, and search.
-Content is managed by Payload CMS (payload.config.ts) with support for rich text, tags, cover images, and publish states.
-Authentication relies on better-auth with Google and GitHub; sessions and comments are stored in Postgres through Drizzle ORM.
-Comments use @fuma-comment, and the site generates both /rss.xml feeds and /api/search indexes.
+Frontend uses Next.js App Router with Tailwind and shadcn, plus fumadocs layout
+pieces for navigation, pagination, and search.
+Content is managed by Payload CMS (payload.config.ts) with support for rich
+text, tags, cover images, and publish states.
+Authentication relies on better-auth with Google and GitHub; sessions and
+comments are stored in Postgres through Drizzle ORM.
+Comments use @fuma-comment, and the site generates both /rss.xml feeds and
+/api/search indexes.
 
 Features
 --------
 
-Post management: Payload admin (/admin) creates drafts or published posts with cover images, tags, and scheduled publish time.
-Blog experience: paginated lists, a tag hub, rich post detail rendering, a share button, and one-click copy link.
-Social and interaction: Google or GitHub login, better-auth session management, Fuma Comment stored locally.
-Enhancements: RSS feed, on-the-fly search index, automatic Open Graph banners, and sitemap via next-sitemap.
-Email template: emails/newsletter-welcome.tsx using React Email with Tailwind, ready for Resend.
-Ops friendly: .env validation, start-database.sh to boot local Postgres, unified Drizzle and Payload scripts for schema.
+Post management: Payload admin (/admin) creates drafts or published posts with
+cover images, tags, and scheduled publish time.
+Blog experience: paginated lists, a tag hub, rich post detail rendering, a share
+button, and one-click copy link.
+Social and interaction: Google or GitHub login, better-auth session management,
+Fuma Comment stored locally.
+Enhancements: RSS feed, on-the-fly search index, automatic Open Graph banners,
+and sitemap via next-sitemap.
+Email template: emails/newsletter-welcome.tsx using React Email with Tailwind,
+ready for Resend.
+Ops friendly: .env validation, start-database.sh to boot local Postgres, unified
+Drizzle and Payload scripts for schema.
 
 Tech Stack
 ----------
 
-Framework: Next.js 15 (App Router) with server components and hybrid static/dynamic rendering.
-UI: Tailwind CSS 4 with shadcn and fumadocs-ui for navigation, pagination, sections, and theming.
+Framework: Next.js 15 (App Router) with server components and hybrid
+static/dynamic rendering.
+UI: Tailwind CSS 4 with shadcn and fumadocs-ui for navigation, pagination,
+sections, and theming.
 Content: Payload CMS for Posts, Users, and Media with Lexical rich text.
 Data: PostgreSQL and Drizzle ORM; auth and comments tables are prefixed blog_*.
 Auth: better-auth with OAuth (Google/GitHub), sessions, and an extra role field.
@@ -45,22 +58,31 @@ docker run -d \
   -v "$(pwd)/pgdata:/var/lib/postgresql/data" \
   postgres:15.1
 
-Then, copy .env.example to .env and fill in the required environment variables that suit your setup.
+Then, copy .env.example to .env and fill in the required environment variables
+that suit your setup.
 Run: pnpm install
 Run Payload CMS migrations: pnpm payload migrate
-Run database migrations: pnpm db:push (optional: SKIP_ENV_VALIDATION=1 pnpm db:push)
-Start the development server: pnpm dev (optional SKIP_ENV_VALIDATION=1 pnpm dev)
+Run database migrations: pnpm db:push
+(optional: SKIP_ENV_VALIDATION=1 pnpm db:push)
+Start the development server: pnpm dev
+(optional SKIP_ENV_VALIDATION=1 pnpm dev)
 Open <http://localhost:3000>
 
 Core Modules
 ------------
 
-Content model lives in payload.config.ts, defining Posts, Users, and Media with cover uploads, tag arrays, publish time, and status.
-Data fetching is wrapped in src/lib/payload-posts.ts for post queries, tag stats, pagination, and slug helpers.
-Pages and layout reside under src/app/(main); _components includes Hero, CTA, and post list UI.
-Auth and comments sit in src/server/auth (better-auth + Drizzle) and src/server/comments storing into blog_comments tables.
-Search and feed live in src/app/(main)/api/search/route.ts (indexes) and src/app/(main)/rss.xml/route.ts (Atom/RSS).
-Email template is emails/newsletter-welcome.tsx, a React Email component that accepts a posts array.
+Content model lives in payload.config.ts, defining Posts, Users, and Media with
+cover uploads, tag arrays, publish time, and status.
+Data fetching is wrapped in src/lib/payload-posts.ts for post queries, tag
+stats, pagination, and slug helpers.
+Pages and layout reside under src/app/(main); _components includes Hero, CTA,
+and post list UI.
+Auth and comments sit in src/server/auth (better-auth + Drizzle) and
+src/server/comments storing into blog_comments tables.
+Search and feed live in src/app/(main)/api/search/route.ts (indexes) and
+src/app/(main)/rss.xml/route.ts (Atom/RSS).
+Email template is emails/newsletter-welcome.tsx, a React Email component that
+accepts a posts array.
 
 Project structure (excerpt)
 ---------------------------
@@ -74,15 +96,18 @@ src/
     (main)/api/search/route.ts           Search index API
     (main)/rss.xml/route.ts              Atom/RSS feed
     (payload)/admin/...                  Payload CMS admin
-  lib/                                   Data and utilities (payload-posts, metadata, auth-client)
-  server/                                better-auth and Drizzle schema plus comment storage
+  lib/                                   Data and utilities (payload-posts,
+                                         metadata, auth-client)
+  server/                                better-auth and Drizzle schema plus
+                                         comment storage
   emails/                                React Email templates
 
 Environment variables
 ---------------------
 
 Required or commonly used:
-  DATABASE_URL: Postgres connection string, e.g. postgresql://user:pass@localhost:5432/blog
+  DATABASE_URL: Postgres connection string, e.g.
+  postgresql://user:pass@localhost:5432/blog
   PAYLOAD_SECRET: Secret used by Payload CMS for JWT
   BETTER_AUTH_SECRET: better-auth session secret
   BETTER_AUTH_URL: Auth callback base, local is <http://localhost:3000>
@@ -109,17 +134,23 @@ Routes and APIs
 ---------------
 
 /                       Home with hero, latest posts, and CTA.
-/posts                 Paginated posts; /posts/[slug] for detail with rich text, comments, and share.
-/tags                  Tag cloud with counts.
-/login                 Google or GitHub login entry.
-/admin                 Payload CMS admin.
-/api/search            Search index endpoint (fumadocs search).
-/rss.xml               Atom/RSS feed.
+/posts                  Paginated posts; /posts/[slug] for detail with rich text,
+                        comments, and share.
+/tags                   Tag cloud with counts.
+/login                  Google or GitHub login entry.
+/admin                  Payload CMS admin.
+/api/search             Search index endpoint (fumadocs search).
+/rss.xml                Atom/RSS feed.
 
 Developer notes
 ---------------
 
-Prefer ./start-database.sh to boot Postgres locally; the script warns if the port is in use.
-Auth and comment tables use the blog_prefix; keep drizzle.config.ts tablesFilter in sync.
-Payload dev mode pre-fills <admin@example.com> / admin123 to speed up admin login.
-If you only need to browse the UI without real data, set SKIP_ENV_VALIDATION=1 and disable features needing external services; full env is recommended for complete coverage.
+Prefer ./start-database.sh to boot Postgres locally; the script warns if the
+port is in use.
+Auth and comment tables use the blog_prefix; keep drizzle.config.ts tablesFilter
+in sync.
+Payload dev mode pre-fills <admin@example.com> / admin123 to speed up admin
+login.
+If you only need to browse the UI without real data, set SKIP_ENV_VALIDATION=1
+and disable features needing external services; full env is recommended for
+complete coverage.
