@@ -19,18 +19,18 @@ Comments use @fuma-comment, and the site generates both /rss.xml feeds and
 Features
 --------
 
-Post management: Payload admin (/admin) creates drafts or published posts with
-cover images, tags, and scheduled publish time.
-Blog experience: paginated lists, a tag hub, rich post detail rendering, a share
-button, and one-click copy link.
-Social and interaction: Google or GitHub login, better-auth session management,
-Fuma Comment stored locally.
-Enhancements: RSS feed, on-the-fly search index, automatic Open Graph banners,
-and sitemap via next-sitemap.
-Email template: emails/newsletter-welcome.tsx using React Email with Tailwind,
-ready for Resend.
-Ops friendly: .env validation, start-database.sh to boot local Postgres, unified
-Drizzle and Payload scripts for schema.
+* Content Management: Payload admin handles drafts, published posts, cover
+                      images, tags, and scheduled publishing.
+* Blog Experience: Includes paginated lists, a tag hub, rich text rendering, and
+                   a one-click share button.
+* Social Interaction: Supports Google or GitHub login via better-auth and locally
+                      stored Fuma Comments.
+* SEO & Enhancements: Features RSS feeds, on-the-fly search indexing, automatic
+                      Open Graph banners, and sitemaps.
+* Email System: Includes a "newsletter-welcome" template built with React Email
+                and Tailwind, ready for Resend.
+* Ops & Tooling: Ships with .env validation, local Postgres boot scripts, and
+                 unified Drizzle/Payload migration scripts.
 
 Tech Stack
 ----------
@@ -71,76 +71,49 @@ Open <http://localhost:3000>
 Core Modules
 ------------
 
-Content model lives in payload.config.ts, defining Posts, Users, and Media with
-cover uploads, tag arrays, publish time, and status.
-Data fetching is wrapped in src/lib/payload-posts.ts for post queries, tag
-stats, pagination, and slug helpers.
-Pages and layout reside under src/app/(main); _components includes Hero, CTA,
-and post list UI.
-Auth and comments sit in src/server/auth (better-auth + Drizzle) and
-src/server/comments storing into blog_comments tables.
-Search and feed live in src/app/(main)/api/search/route.ts (indexes) and
-src/app/(main)/rss.xml/route.ts (Atom/RSS).
-Email template is emails/newsletter-welcome.tsx, a React Email component that
-accepts a posts array.
+* Content Model: Defined in payload.config.ts to manage Posts, Users, and
+                 Media with Lexical rich text.
+* Data Fetching: Wrapped in src/lib/payload-posts.ts to handle post queries, tag
+                 statistics, and pagination.
+* Pages & Layout: Located under src/app/(main), featuring modular components for
+                  the Hero section and post lists.
+* Auth & Comments: Managed in src/server, utilizing better-auth with Drizzle ORM
+                   and dedicated blog_* tables.
+* Search & Feed: API routes generate the search index and Atom/RSS feeds for
+                 content distribution.
+* Email Templates: Located in emails/, providing React Email components that
+                   dynamically accept post arrays.
 
 Project structure (excerpt)
 ---------------------------
 
 src/
-  app/
-    (main)/(home)/page.tsx               Home with hero, recent posts, CTA
-    (main)/(home)/posts/[slug]/page.tsx  Post detail with comments and share
-    (main)/(home)/posts/page.tsx         Paginated posts list
-    (main)/(home)/tags/page.tsx          Tag hub
-    (main)/api/search/route.ts           Search index API
-    (main)/rss.xml/route.ts              Atom/RSS feed
-    (payload)/admin/...                  Payload CMS admin
-  lib/                                   Data and utilities (payload-posts,
-                                         metadata, auth-client)
-  server/                                better-auth and Drizzle schema plus
-                                         comment storage
-  emails/                                React Email templates
-
-Environment variables
----------------------
-
-Required or commonly used:
-  DATABASE_URL: Postgres connection string, e.g.
-  postgresql://user:pass@localhost:5432/blog
-  PAYLOAD_SECRET: Secret used by Payload CMS for JWT
-  BETTER_AUTH_SECRET: better-auth session secret
-  BETTER_AUTH_URL: Auth callback base, local is <http://localhost:3000>
-  NEXT_PUBLIC_SERVER_URL: Base URL for links, OG, and RSS
-  RESEND_API_KEY / RESEND_AUDIENCE_ID / EMAIL_FROM: Needed for sending emails
-  GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET: Needed if enabling Google login
-  GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET: Needed if enabling GitHub login
-  NEXT_PUBLIC_UMAMI_URL / NEXT_PUBLIC_UMAMI_WEBSITE_ID: Optional analytics
-
-Scripts
--------
-
-pnpm dev                  Start Next.js dev server (includes Payload routes).
-pnpm build                Build production output.
-pnpm preview              Preview the production build.
-pnpm db:generate          Generate Drizzle migrations for auth and comments.
-pnpm db:migrate           Run Drizzle migrations.
-pnpm payload:migrate      Sync Payload CMS tables.
-pnpm lint                 Run quality checks (biome).
-pnpm format               Format source (biome).
-pnpm email:dev            Preview React Email templates locally.
+├── app/
+│   ├── (main)/(home)/page.tsx               Home with hero, recent posts, CTA
+│   ├── (main)/(home)/posts/[slug]/page.tsx  Post detail with comments and share
+│   ├── (main)/(home)/posts/page.tsx         Paginated posts list
+│   ├── (main)/(home)/tags/page.tsx          Tag hub
+│   ├── (main)/api/search/route.ts           Search index API
+│   ├── (main)/rss.xml/route.ts              Atom/RSS feed
+│   └── (payload)/admin/...                  Payload CMS admin
+├── lib/                                     Data and utilities (payload-posts,
+│                                            metadata, auth-client)
+├── server/                                  better-auth and Drizzle schema plus
+│                                            comment storage
+└── emails/                                  React Email templates
 
 Routes and APIs
 ---------------
 
-/                       Home with hero, latest posts, and CTA.
-/posts                  Paginated posts; /posts/[slug] for detail with rich text,
-                        comments, and share.
-/tags                   Tag cloud with counts.
-/login                  Google or GitHub login entry.
-/admin                  Payload CMS admin.
-/api/search             Search index endpoint (fumadocs search).
-/rss.xml                Atom/RSS feed.
+/                           Home with hero, latest posts, and CTA.
+├── posts                   Paginated posts; /posts/[slug] for detail with rich text,
+│                           comments, and share.
+├── tags                    Tag cloud with counts.
+├── login                   Google or GitHub login entry.
+├── admin                   Payload CMS admin.
+├── api/
+│   └── search              Search index endpoint (fumadocs search).
+└── rss.xml                 Atom/RSS feed.
 
 Developer notes
 ---------------
