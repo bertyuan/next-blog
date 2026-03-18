@@ -19,18 +19,18 @@ Comments use @fuma-comment, and the site generates both /rss.xml feeds and
 Features
 --------
 
-Content Management: Payload admin handles drafts, published posts, cover 
-images, tags, and scheduled publishing.
-Blog Experience: Includes paginated lists, a tag hub, rich text rendering, and 
-a one-click share button.
-Social Interaction: Supports Google or GitHub login via better-auth and locally 
-stored Fuma Comments.
-SEO & Enhancements: Features RSS feeds, on-the-fly search indexing, automatic 
-Open Graph banners, and sitemaps.
-Email System: Includes a "newsletter-welcome" template built with React Email 
-and Tailwind, ready for Resend.
-Ops & Tooling: Ships with .env validation, local Postgres boot scripts, and 
-unified Drizzle/Payload migration scripts.
+* Content Management: Payload admin handles drafts, published posts, cover
+                      images, tags, and scheduled publishing.
+* Blog Experience: Includes paginated lists, a tag hub, rich text rendering, and
+                   a one-click share button.
+* Social Interaction: Supports Google or GitHub login via better-auth and locally
+                      stored Fuma Comments.
+* SEO & Enhancements: Features RSS feeds, on-the-fly search indexing, automatic
+                      Open Graph banners, and sitemaps.
+* Email System: Includes a "newsletter-welcome" template built with React Email
+                and Tailwind, ready for Resend.
+* Ops & Tooling: Ships with .env validation, local Postgres boot scripts, and
+                 unified Drizzle/Payload migration scripts.
 
 Tech Stack
 ----------
@@ -71,17 +71,18 @@ Open <http://localhost:3000>
 Core Modules
 ------------
 
-Content Model: Defined in payload.config.ts to manage Posts, Users, and 
-Media with Lexical rich text.
-Data Fetching: Wrapped in src/lib/payload-posts.ts to handle post queries, tag 
-statistics, and pagination.
-Pages & Layout: Located under src/app/(main), featuring modular components for 
-the Hero section and post lists.
-Auth & Comments: Managed in src/server, utilizing better-auth with Drizzle ORM 
-and dedicated blog_* tables.
-Search & Feed: API routes generate the search index and Atom/RSS feeds for content distribution.
-Email Templates: Located in emails/, providing React Email components that 
-dynamically accept post arrays.
+* Content Model: Defined in payload.config.ts to manage Posts, Users, and
+                 Media with Lexical rich text.
+* Data Fetching: Wrapped in src/lib/payload-posts.ts to handle post queries, tag
+                 statistics, and pagination.
+* Pages & Layout: Located under src/app/(main), featuring modular components for
+                  the Hero section and post lists.
+* Auth & Comments: Managed in src/server, utilizing better-auth with Drizzle ORM
+                   and dedicated blog_* tables.
+* Search & Feed: API routes generate the search index and Atom/RSS feeds for
+                 content distribution.
+* Email Templates: Located in emails/, providing React Email components that
+                   dynamically accept post arrays.
 
 Project structure (excerpt)
 ---------------------------
