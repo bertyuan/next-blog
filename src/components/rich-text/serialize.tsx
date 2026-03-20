@@ -30,6 +30,12 @@ interface LexicalNode {
       }
       relationTo?: string
     }
+    // Block node fields (populated by Payload BlocksFeature, e.g. CodeBlock stores blockType:'Code', language, and code)
+    blockType?: string
+    blockName?: string
+    id?: string
+    code?: string
+    language?: string
   }
   language?: string
   version?: number
@@ -176,6 +182,23 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
                 {serializedChildren}
               </a>
             )
+          }
+          case 'block': {
+            const blockFields = node.fields
+            if (blockFields?.blockType === 'Code') {
+              return (
+                <pre key={index} className="overflow-x-auto">
+                  <code
+                    className={
+                      blockFields.language ? `language-${blockFields.language}` : undefined
+                    }
+                  >
+                    {blockFields.code}
+                  </code>
+                </pre>
+              )
+            }
+            return null
           }
           case 'code': {
             // 代码块
