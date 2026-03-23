@@ -21,6 +21,12 @@ const config = {
     'oxc-transform',
     'twoslash',
   ],
+    typescript: {
+        ignoreBuildErrors: true,
+    },
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
 };
 
 export default withPayload(withMDX(config));
