@@ -23,7 +23,7 @@ This unit test verifies the functionality of the `cn` function located in `src/l
 
 ## Test implementation
 
-The test file `simple-test.ps1` includes:
+The test file `simple_Unit_test_CN_Function.ps1` includes:
 
 - A mock implementation of the `cn` function (matching the actual implementation)
 - Simple test cases covering different scenarios
