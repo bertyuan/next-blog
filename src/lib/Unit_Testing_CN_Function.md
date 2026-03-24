@@ -16,9 +16,9 @@ This unit test verifies the functionality of the `cn` function located in `src/l
 
 1. Open PowerShell
 2. Navigate to the project directory:
-3. Run the test script with bypass execution policy:
+3. Run the test script:
    ```powershell
-   powershell -ExecutionPolicy Bypass -File src/lib/simple_Unit_test_CN_Function.ps1
+   powershell -NoProfile -File src/lib/simple_Unit_test_CN_Function.ps1
    ```
 
 ## Test implementation
