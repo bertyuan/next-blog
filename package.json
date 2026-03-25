@@ -27,7 +27,7 @@
     "email:build": "email build",
     "email:dev": "email dev -p 3001",
     "email:export": "email export",
-    "test": "vitest",
+    "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage"
   },
