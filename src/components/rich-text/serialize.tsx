@@ -64,6 +64,7 @@ async function ShikiCode({ code, language }: { code: string; language: string })
         return (
             <div
                 className="my-4 text-sm [&>pre]:overflow-x-auto [&>pre]:rounded-lg [&>pre]:border [&>pre]:border-border [&>pre]:p-4"
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: Shiki `codeToHtml` returns escaped, trusted syntax-highlighting markup for code snippets.
                 dangerouslySetInnerHTML={{ __html: html }}
             />
         )
