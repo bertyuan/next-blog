@@ -60,7 +60,21 @@ docker run -d \
 
 Then, copy .env.example to .env and fill in the required environment variables
 that suit your setup.
+
+Generate authentication key: This project uses Better Auth. 
+A secure key of at least 32 characters must be provided. 
+Please run the following command in the terminal to generate it:
+npx @better-auth/cli secret
+
+Add the generated string to the .env file:
+BETTER_AUTH_SECRET =The extremely long random string you just generated
+
 Run: pnpm install
+
+Run installation of react-syntax-highlighter dependencies:
+pnpm add react-syntax-highlighter
+pnpm add -D @types/react-syntax-highlighter
+
 Run Payload CMS migrations: pnpm payload migrate
 Run database migrations: pnpm db:push
 (optional: SKIP_ENV_VALIDATION=1 pnpm db:push)
