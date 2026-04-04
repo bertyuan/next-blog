@@ -38,20 +38,20 @@ export const Posts: CollectionConfig = {
       label: 'description',
       type: 'textarea',
     },
-      {
-          name: 'content',
-          label: 'content',
-          type: 'richText',
-          required: true,
-          editor: lexicalEditor({
-              features: ({ defaultFeatures }) => [
-                  ...defaultFeatures, // 保留原有的加粗、标题、列表等基础功能
-                  BlocksFeature({
-                      blocks: [CodeBlock], // 将代码块注册到编辑器中
-                  }),
-              ],
+    {
+      name: 'content',
+      label: 'content',
+      type: 'richText',
+      required: true,
+      editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [
+          ...defaultFeatures, // 保留原有的加粗、标题、列表等基础功能
+          BlocksFeature({
+            blocks: [CodeBlock], // 将代码块注册到编辑器中
           }),
-      },
+        ],
+      }),
+    },
     {
       name: 'featuredImage',
       label: 'image',
