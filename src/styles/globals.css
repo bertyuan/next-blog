@@ -197,10 +197,17 @@
     }
   }
 }
-.react-syntax-highlighter-line-number {
-  display: inline-block !important;
-  min-width: 2.5em !important;
-  text-align: right !important;
-  padding-right: 1em !important;
-  font-variant-numeric: tabular-nums !important;
+.shiki-block code {
+  counter-reset: line;
+}
+
+.shiki-block code .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  min-width: 2.5em;
+  padding-right: 1em;
+  text-align: right;
+  color: var(--color-muted-foreground);
+  font-variant-numeric: tabular-nums;
 }
