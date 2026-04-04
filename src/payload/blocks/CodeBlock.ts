@@ -29,9 +29,6 @@ export const CodeBlock: Block = {
             label: 'Code Content',
             type: 'code',
             required: true,
-            admin: {
-                language: 'cpp',
-            },
         },
     ],
 };
