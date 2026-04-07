@@ -9,7 +9,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": ["node_modules", ".next", ".source"]
+    "ignore": ["node_modules", ".next", ".source","src/app/(payload)/admin/importMap.js"]
   },
   "formatter": {
     "enabled": true,
