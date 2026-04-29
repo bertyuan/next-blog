@@ -197,3 +197,17 @@
     }
   }
 }
+.shiki-block code {
+  counter-reset: line;
+}
+
+.shiki-block code .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  min-width: 2.5em;
+  padding-right: 1em;
+  text-align: right;
+  color: var(--color-muted-foreground);
+  font-variant-numeric: tabular-nums;
+}

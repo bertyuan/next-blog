@@ -1,4 +1,6 @@
+import { codeToHtml } from 'shiki' // [!code ++]
 import React, { Fragment, type JSX } from 'react'
+import { CodeHighlighter } from '@/components/ui/code-highlighter'
 import Link from 'next/link'
 import {
   IS_BOLD,
@@ -30,6 +32,9 @@ interface LexicalNode {
       }
       relationTo?: string
     }
+      blockType?: string
+      language?: string
+      code?: string
   }
   language?: string
   version?: number
@@ -38,7 +43,40 @@ interface LexicalNode {
 type Props = {
   nodes: LexicalNode[]
 }
+// 递归提取代码块中的纯文本
+function extractText(node: LexicalNode): string {
+    if (node.type === 'text') return node.text || ''
+    if (node.type === 'linebreak') return '\n'
+    if (node.children) return node.children.map(extractText).join('')
+    return ''
+}
 
+// 异步渲染语法高亮组件
+async function ShikiCode({ code, language }: { code: string; language: string }) {
+    try {
+        const html = await codeToHtml(code, {
+            lang: language || 'text',
+            themes: {
+                light: 'catppuccin-latte',
+                dark: 'catppuccin-mocha', // 自动匹配你博客的亮/暗色主题
+            },
+        })
+        return (
+            <div
+                className="my-4 text-sm [&>pre]:overflow-x-auto [&>pre]:rounded-lg [&>pre]:border [&>pre]:border-border [&>pre]:p-4"
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: Shiki `codeToHtml` returns escaped, trusted syntax-highlighting markup for code snippets.
+                dangerouslySetInnerHTML={{ __html: html }}
+            />
+        )
+    } catch (error) {
+        // 如果输入的语言不支持，降级回退到基础样式
+        return (
+            <pre className="my-4 overflow-x-auto rounded-lg border border-border bg-muted p-4 text-sm font-mono">
+        <code>{code}</code>
+      </pre>
+        )
+    }
+}
 export function serializeLexical({ nodes }: Props): JSX.Element {
   return (
     <Fragment>
@@ -72,7 +110,11 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
             )
           }
           if (format & IS_CODE) {
-            text = <code key={index}>{node.text}</code>
+              text = (
+                  <code key={index} className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-sm">
+                      {node.text}
+                  </code>
+              )
           }
           if (format & IS_SUBSCRIPT) {
             text = <sub key={index}>{text}</sub>
@@ -178,16 +220,28 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
             )
           }
           case 'code': {
-            // 代码块
-            return (
-              <pre key={index} className="overflow-x-auto">
-                <code>{serializedChildren}</code>
-              </pre>
-            )
+                // 提取纯代码文本和语言类型
+                const codeText = extractText(node)
+                const language = node.language || 'text'
+
+                return <ShikiCode key={index} code={codeText} language={language} />
           }
           case 'horizontalrule': {
             return <hr key={index} />
           }
+            case 'block': {
+                const fields = node.fields
+                if (fields?.blockType === 'codeBlock') {
+                    return (
+                        <CodeHighlighter
+                            key={index}
+                            language={fields.language || 'text'}
+                            code={fields.code || ''}
+                        />
+                    )
+                }
+                return null
+            }
           default:
             // 如果有子节点，递归渲染
             if (node.children) {
