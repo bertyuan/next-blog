@@ -85,6 +85,19 @@ export async function getPublishedPosts(options?: {
     limit: options?.limit || 10,
     page: options?.page || 1,
     depth: 1, // 获取关联的 media 数据
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      description: true,
+      content: true,
+      featuredImage: true,
+      author: true,
+      tags: true,
+      publishedAt: true,
+      createdAt: true,
+      updatedAt: true,
+    },
   })
 
   return {
@@ -126,6 +139,9 @@ export async function getAllPostSlugs(): Promise<string[]> {
     },
     limit: 1000,
     depth: 0,
+    select: {
+      slug: true,
+    },
   })
 
   return result.docs.map((doc) => (doc as unknown as PayloadPost).slug)
